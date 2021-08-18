@@ -1,0 +1,6 @@
+# hosts file
+[ec2]
+3.137.216.37
+[ec2:vars]
+ansible_user=ec2-user
+ansible_ssh_private_key_file=~/.ssh/EffectiveDevOpsAWS.pem
