@@ -13,7 +13,8 @@ import (
 func main() {
 	http.HandleFunc("/visits", viewHandler)
 	fmt.Printf("doing ListenAndServe ...\n")
-	err := http.ListenAndServe(":80", nil)
+	// port 80 is redirected to 8080 with iptables rules in terraform setup code
+	err := http.ListenAndServe(":8080", nil)
 	check(err)
 }
 
