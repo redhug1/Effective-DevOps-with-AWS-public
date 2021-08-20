@@ -25,8 +25,8 @@ func check(err error) {
 }
 
 func viewHandler(writer http.ResponseWriter, request *http.Request) {
-	visitsCounter := 5 //updateDbCounter()
-	templateText := "<h1>By Red:</h1>\n\nVisits Counter: {{.}}"
+	visitsCounter := updateDbCounter()
+	templateText := "<h1>By Red:</h1>\n\nVisits Counter: {{.}}\n"
 	tmpl, err := template.New("count").Parse(templateText)
 	check(err)
 	err = tmpl.Execute(writer, visitsCounter)
@@ -36,7 +36,6 @@ func viewHandler(writer http.ResponseWriter, request *http.Request) {
 func updateDbCounter() int64 {
 	db := dbConn()
 	defer db.Close()
-	//!!! fix the following
 	_, err := db.Exec("UPDATE visits SET count = count+1 WHERE id = 1")
 	check(err)
 
