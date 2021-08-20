@@ -13,7 +13,7 @@ import (
 func main() {
 	http.HandleFunc("/visits", viewHandler)
 	fmt.Printf("doing ListenAndServe ...\n")
-	err := http.ListenAndServe("localhost:8080", nil)
+	err := http.ListenAndServe("localhost:3000", nil)
 	check(err)
 }
 
