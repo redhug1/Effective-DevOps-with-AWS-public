@@ -12,18 +12,20 @@ import (
 
 func main() {
 	http.HandleFunc("/visits", viewHandler)
-	err := http.ListenAndServe("localhost:8080", nil)
+	fmt.Printf("doing ListenAndServe ...\n")
+	err := http.ListenAndServe("localhost:3000", nil)
 	check(err)
 }
 
 func check(err error) {
 	if err != nil {
+		fmt.Printf("Error: %v\n", err)
 		log.Fatal()
 	}
 }
 
 func viewHandler(writer http.ResponseWriter, request *http.Request) {
-	visitsCounter := updateDbCounter()
+	visitsCounter := 5 //updateDbCounter()
 	templateText := "<h1>By Red:</h1>\n\nVisits Counter: {{.}}"
 	tmpl, err := template.New("count").Parse(templateText)
 	check(err)
