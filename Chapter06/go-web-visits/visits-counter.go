@@ -62,7 +62,10 @@ func dbConn() (db *sql.DB) {
 	dbUser := "monty"
 	dbPass := "some_pass"
 	dbName := "demodb"
-	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
+	dbUrl := ""
+	// dbUrl := "tcp(localhost:3306)"
+	// dbUrl := "tcp(<Endpoint feld>:3306)"
+	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@"+dbUrl+"/"+dbName)
 	if err != nil {
 		panic(err.Error())
 	}
