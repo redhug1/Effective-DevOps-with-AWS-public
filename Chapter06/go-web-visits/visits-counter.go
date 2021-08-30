@@ -12,6 +12,9 @@ import (
 )
 
 func main() {
+	// Print out counter to check that db is running
+	fmt.Printf("visits counter is: %d\n", updateDbCounter())
+
 	http.HandleFunc("/visits", viewHandler)
 	fmt.Printf("doing ListenAndServe ...\n")
 	// port 80 is redirected to 8080 with iptables rules in terraform setup code
