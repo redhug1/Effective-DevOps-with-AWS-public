@@ -35,7 +35,7 @@ func viewHandler(writer http.ResponseWriter, request *http.Request) {
 	visitsCounter := updateDbCounter()
 	info := Info{visitsCounter, GetLocalIP()}
 
-	templateText := "<h1>By Red:</h1>\n\nVisits Counter: {{.Counter}}\n\nPrivate IP: {{.Ip}}\n"
+	templateText := "<h1>By Red:</h1>\n<p>Visits Counter: {{.Counter}}</p>\n<p>Private IP: {{.Ip}}</p>\n"
 	t, err := template.New("count").Parse(templateText)
 	check(err)
 	err = t.Execute(writer, info)
