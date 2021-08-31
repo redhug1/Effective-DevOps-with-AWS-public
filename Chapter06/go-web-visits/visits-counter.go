@@ -13,7 +13,8 @@ import (
 
 func main() {
 	// Print out counter to check that db is running
-	fmt.Printf("visits counter is: %d\n", updateDbCounter())
+	count, result := updateDbCounter()
+	fmt.Printf("visits counter is: %d, %s\n", count, result)
 
 	http.HandleFunc("/visits", viewHandler)
 	fmt.Printf("doing ListenAndServe ...\n")
@@ -31,25 +32,31 @@ func check(err error) {
 
 type Info struct {
 	Counter int64
+	Status  string
 	Ip      string
 }
 
 func viewHandler(writer http.ResponseWriter, request *http.Request) {
-	visitsCounter := updateDbCounter()
-	info := Info{visitsCounter, GetLocalIP()}
+	visitsCounter, result := updateDbCounter()
+	info := Info{visitsCounter, result, GetLocalIP()}
 
-	templateText := "<h1>By Red:</h1>\n<p>Visits Counter: {{.Counter}}</p>\n<p>Private IP: {{.Ip}}</p>\n"
+	templateText := "<h1>By Red:</h1>\n<p>Visits Counter: {{.Counter}}</p>\n<p>Status: {{.Status}}</p>\n<p>Private IP: {{.Ip}}</p>\n"
 	t, err := template.New("count").Parse(templateText)
 	check(err)
 	err = t.Execute(writer, info)
 	check(err)
 }
 
-func updateDbCounter() int64 {
-	db := dbConn()
+func updateDbCounter() (int64, string) {
+	db, err := dbConn()
+	if err != nil {
+		return -3, fmt.Sprintf("%v", err)
+	}
 	defer db.Close()
-	_, err := db.Exec("UPDATE visits SET count = count+1 WHERE id = 1")
-	check(err)
+	_, err = db.Exec("UPDATE visits SET count = count+1 WHERE id = 1")
+	if err != nil {
+		return -4, fmt.Sprintf("%v", err)
+	}
 
 	var ID int64
 	var count int64
@@ -59,28 +66,29 @@ func updateDbCounter() int64 {
 	if err = row.Scan(&ID, &count, &version); err != nil {
 		if err == sql.ErrNoRows {
 			fmt.Printf("no row\n")
-			return -1
+			return -1, "no row"
 		}
 		fmt.Printf("other error %v\n", err)
-		return -2
+		return -2, fmt.Sprintf("other error: %v", err)
 	}
 
-	return count
+	return count, "ok"
 }
 
-func dbConn() (db *sql.DB) {
+func dbConn() (db *sql.DB, err error) {
 	dbDriver := "mysql"
 	dbUser := "monty"
 	dbPass := "some_pass"
 	dbName := "demodb"
 	// dbUrl := ""
 	dbUrl := "tcp(localhost:3306)"
-	// dbUrl := "tcp(<Endpoint feld>:3306)"
-	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@"+dbUrl+"/"+dbName)
+	// dbUrl := "tcp(<Endpoint field>:3306)"
+	db, err = sql.Open(dbDriver, dbUser+":"+dbPass+"@"+dbUrl+"/"+dbName)
 	if err != nil {
-		panic(err.Error())
+		return nil, err
+		//panic(err.Error())
 	}
-	return db
+	return db, nil
 }
 
 // GetLocalIP returns the non loopback local IP of the host
