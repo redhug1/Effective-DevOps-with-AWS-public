@@ -86,7 +86,6 @@ func dbConn() (db *sql.DB, err error) {
 	db, err = sql.Open(dbDriver, dbUser+":"+dbPass+"@"+dbUrl+"/"+dbName)
 	if err != nil {
 		return nil, err
-		//panic(err.Error())
 	}
 	return db, nil
 }
