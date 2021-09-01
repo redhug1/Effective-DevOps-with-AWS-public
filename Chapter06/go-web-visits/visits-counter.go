@@ -72,6 +72,8 @@ func updateDbCounter() (int64, string) {
 		return -2, fmt.Sprintf("other error: %v", err)
 	}
 
+	fmt.Printf("count: %d\n", count)
+
 	return count, "ok"
 }
 
